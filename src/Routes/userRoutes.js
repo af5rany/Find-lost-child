@@ -1,25 +1,25 @@
 const express = require("express");
 const routes = express();
 const {
-  getUsers,
-  getUsersById,
+  // getUsers,
+  // getUsersById,
   signUp,
   login,
   updatePassword,
-  deleteUser,
-  uploadFile,
+  // deleteUser,
+  // uploadFile,
 } = require("../Controllers/authenticationController");
 const { verifySignUp } = require("../Helpers/validationSchema");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+// const multer = require("multer");
+// const upload = multer({ dest: "uploads/" });
 const verifyToken = require("../Helpers/tokenAuth");
-const verifyAdmin = require("../Helpers/verifyAdmin");
+// const verifyAdmin = require("../Helpers/verifyAdmin");
 
 //////////get methods///////////
 
-routes.get("/", getUsers);
+// routes.get("/", getUsers);
 
-routes.get("/:id", getUsersById);
+// routes.get("/:id", getUsersById);
 
 //////////post methods///////////
 
@@ -27,7 +27,7 @@ routes.post("/signup", verifySignUp, signUp);
 
 routes.post("/login", login);
 
-routes.post("/upload", verifyToken, upload.single("photo"), uploadFile);
+// routes.post("/upload", verifyToken, upload.single("photo"), uploadFile);
 
 //////////patch methods///////////
 
@@ -35,7 +35,7 @@ routes.patch("/update", verifyToken, updatePassword);
 
 //////////delete methods///////////
 
-routes.delete("/", verifyToken, verifyAdmin, deleteUser);
+// routes.delete("/", verifyToken, verifyAdmin, deleteUser);
 
 routes.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

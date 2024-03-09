@@ -16,15 +16,14 @@ const routers = express.Router();
 /////////////get methods////////////
 routers.get("/", getAllArticles);
 routers.get("/:id", getArticleById);
-
 routers.post("/", createArticle);
-routers.post("/like/:id", likeArticleById);
-routers.post("/comment/:id", createComment);
-
 routers.patch("/:id", updateArticleById);
-routers.patch("/comment/:id/:commentid", updateCommentById);
-
 routers.delete("/:id", deleteArticleById);
+
+routers.post("/like/:id", likeArticleById);
+
+routers.post("/comment/:id", createComment);
+routers.patch("/comment/:id/:commentid", updateCommentById);
 routers.delete("/comment/:id/:commentid", deleteCommentById);
 
 routers.use((err, req, res, next) => {

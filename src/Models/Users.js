@@ -13,8 +13,12 @@ const UsersSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "user"],
-    required: [true, "please enter a role"],
+    enum: ["parent", "guest"],
+    required: [true, "please enter your role"],
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, "please enter your Phone Number"],
   },
   password: {
     type: String,

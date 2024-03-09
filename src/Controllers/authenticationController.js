@@ -4,24 +4,17 @@ const AppError = require("../Helpers/AppError");
 const User = require("../Models/Users");
 const bcrypt = require("bcrypt");
 const {
-  schema,
-  verifySignUp,
+  // schema,
+  // verifySignUp,
   passwordSchema,
 } = require("../Helpers/validationSchema");
 const jwt = require("jsonwebtoken");
 const Post = require("../Models/posts");
 const Review = require("../Models/reviewModel");
-const cloudinary = require("cloudinary").v2;
-
-cloudinary.config({
-  cloud_name: "dih6ijtz6",
-  api_key: "881138459648736",
-  api_secret: "Bk73tFtZ3ayuF6s6mw9WECnDHUM",
-});
 
 ////////////////////////////////////get methods//////////////////////////////////
 
-//http://localhost:8080/users
+//http://localhost:3000/users
 
 const getUsers = async (req, res, next) => {
   try {
@@ -33,7 +26,7 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-//http://localhost:8080/users
+//http://localhost:3000/users
 
 const getUsersById = async (req, res, next) => {
   try {
@@ -47,12 +40,20 @@ const getUsersById = async (req, res, next) => {
 
 ////////////////////////////////////post methods//////////////////////////////////
 
-//http://localhost:8080/users/signup
+//http://localhost:3000/users/signup
 
 const signUp = async (req, res, next) => {
   try {
-    const { email, userName, role, password, password_confirm } = req.body;
-    if (!email || !userName || !role || !password || !password_confirm)
+    const { email, userName, role, phoneNumber, password, password_confirm } =
+      req.body;
+    if (
+      !email ||
+      !userName ||
+      !role ||
+      !phoneNumber ||
+      !password ||
+      !password_confirm
+    )
       return next(new AppError("Please enter the required info"));
     const user = await User.findOne({ email });
     if (user) {
@@ -63,6 +64,7 @@ const signUp = async (req, res, next) => {
         email,
         userName,
         role,
+        phoneNumber,
         password: hashed_password,
       });
       await newUser.save();
@@ -76,7 +78,7 @@ const signUp = async (req, res, next) => {
   }
 };
 
-//http://localhost:8080/users/login
+//http://localhost:3000/users/login
 
 const login = async (req, res, next) => {
   try {
@@ -99,33 +101,21 @@ const login = async (req, res, next) => {
   }
 };
 
-//http://localhost:8080/users/upload
-
-const uploadFile = async (req, res, next) => {
-  try {
-    const user = await User.findOne({ _id: req.id });
-    if (!user) return next(new AppError("user does not exist"));
-    if (!req.file) return next(new AppError("please upload your photo"));
-    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      public_id: req.file.originalname,
-    });
-    user.photo_url.push(uploadResult.url);
-    await user.save();
-    user.password = undefined;
-    res.send(user);
-  } catch (error) {
-    return next(error);
-  }
-};
-
 ////////////////////////////////////patch methods//////////////////////////////////
 
-//http://localhost:8080/users/update
+//http://localhost:3000/users/update
 
 const updatePassword = async (req, res, next) => {
   try {
-    const { email, password, newPassword, newPassword_confirm } = req.body;
-    if (!email || !password || !newPassword || !newPassword_confirm)
+    const { email, password, phoneNumber, newPassword, newPassword_confirm } =
+      req.body;
+    if (
+      !email ||
+      !password ||
+      !phoneNumber ||
+      !newPassword ||
+      !newPassword_confirm
+    )
       return next(new AppError("Please enter the required info"));
     const user = await User.findOne({ email: email });
     if (!user) return next(new AppError("user does not exist"));
@@ -149,7 +139,7 @@ const updatePassword = async (req, res, next) => {
 
 ////////////////////////////////////delete methods//////////////////////////////////
 
-//http://localhost:8080/users
+//http://localhost:3000/users
 
 const deleteUser = async (req, res, next) => {
   try {
@@ -178,5 +168,5 @@ module.exports = {
   login,
   updatePassword,
   deleteUser,
-  uploadFile,
+  // uploadFile,
 };

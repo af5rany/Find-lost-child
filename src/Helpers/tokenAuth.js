@@ -12,6 +12,7 @@ const verifyToken = async (req, res, next) => {
     const id = jwt.verify(token, secretKey).id;
 
     req.authorizedUser = await User.findById(id);
+    req.user = req.authorizedUser;
     if (!req.authorizedUser)
       return next(new AppError("user is not found or invalid token:/"));
     req.id = id;

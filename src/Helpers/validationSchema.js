@@ -7,7 +7,11 @@ const schema = joi.object({
     .required(),
 
   userName: joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")).required(),
-  role: joi.string().valid("admin", "user").required(),
+  role: joi.string().valid("parent", "guest").required(),
+  phoneNumber: joi
+    .string()
+    // .pattern(/^(\+\d{1,3}[- ]?)?\d{10}$/)
+    .required(),
   password: joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")).required(),
   password_confirm: joi.ref("password"),
 });
@@ -18,12 +22,14 @@ const passwordSchema = joi.object({
 });
 
 const verifySignUp = async (req, res, next) => {
-  const { email, userName, role, password, password_confirm } = req.body;
+  const { email, userName, role, phoneNumber, password, password_confirm } =
+    req.body;
   try {
     await schema.validateAsync({
       email,
       userName,
       role,
+      phoneNumber,
       password,
       password_confirm,
     });

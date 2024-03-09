@@ -7,7 +7,7 @@ const getAllArticles = async (req, res, next) => {
     if (Articles.length === 0) {
       return next(new AppError("No Articles found!", 404));
     }
-    res.send({ message: "All Articles retrieved successfully", Articles });
+    res.send(Articles);
   } catch (error) {
     return next(error);
   }
@@ -19,14 +19,15 @@ const getArticleById = async (req, res, next) => {
     if (!article) {
       return next(new AppError("Article not found", 404));
     }
-    res.send({ message: "Article retrieved successfully", article });
+    res.send(article);
   } catch (error) {
     return next(error);
   }
 };
 const createArticle = async (req, res, next) => {
   try {
-    const { title, description, userName } = req.body;
+    const { title, description } = req.body;
+    const userName = req.user.userName;
     if (!title)
       return next(new AppError("Please enter the article description!"));
     const article = new Article({
@@ -36,7 +37,7 @@ const createArticle = async (req, res, next) => {
       publishDate: new Date(),
     });
     await article.save();
-    res.send({ message: "Article created successfully", article });
+    res.send(article);
   } catch (error) {
     return next(error);
   }
@@ -62,19 +63,18 @@ const deleteArticleById = async (req, res, next) => {
     const article = await Article.findById(req.params.id);
     if (!article) return next(new AppError("this article does not exist"));
     const deleted = await Article.findByIdAndDelete(req.params.id);
-    res.send({ message: "Article deleted successfully", deleted });
+    res.send({ message: "Article deleted successfully" });
   } catch (err) {
     return next(err);
   }
 };
-
 const likeArticleById = async (req, res, next) => {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
       return next(new AppError("Article not found", 404));
     }
-    const userName = req.body.userName;
+    const userName = req.user.userName;
     const isLiked = article.likedBy.find((name) => name === userName);
     if (!isLiked) {
       article.likedBy.push(userName);
@@ -92,10 +92,12 @@ const likeArticleById = async (req, res, next) => {
 const createComment = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { description, userName } = req.body;
     const article = await Article.findById(id);
-    if (!description)
-      return next(new AppError("Please enter the Comment description!"));
+    if (!article)
+      return next(new AppError("sorry this article no longer exists"));
+    const { description } = req.body;
+    if (!description) return next(new AppError("Please enter a Comment!"));
+    const userName = req.user.userName;
     const comment = {
       description,
       userName: userName.toLowerCase(),
@@ -103,7 +105,7 @@ const createComment = async (req, res, next) => {
     };
     article.comments.push(comment);
     await article.save();
-    res.send({ message: "Comment created successfully", article });
+    res.send(article);
   } catch (error) {
     return next(error);
   }
@@ -111,10 +113,13 @@ const createComment = async (req, res, next) => {
 const updateCommentById = async (req, res, next) => {
   try {
     const { id, commentid } = req.params;
-    const { description, userName } = req.body;
     const article = await Article.findById(id);
+    if (!article)
+      return next(new AppError("sorry this article no longer exists"));
+    const { description } = req.body;
     if (!description)
       return next(new AppError("Please enter the Comment description!"));
+    const userName = req.user.userName;
     const editedComment = {
       description,
       userName: userName.toLowerCase(),
@@ -130,7 +135,7 @@ const updateCommentById = async (req, res, next) => {
     article.comments[commentIndex] = editedComment;
 
     await article.save();
-    res.send({ message: "Comment edited successfully", article });
+    res.send(article);
   } catch (error) {
     return next(error);
   }
