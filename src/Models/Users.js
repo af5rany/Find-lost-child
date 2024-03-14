@@ -11,6 +11,10 @@ const UsersSchema = new Schema({
     type: String,
     required: [true, "please enter a userName"],
   },
+  name: {
+    type: String,
+    required: [true, "please enter yout name"],
+  },
   role: {
     type: String,
     enum: ["parent", "guest"],

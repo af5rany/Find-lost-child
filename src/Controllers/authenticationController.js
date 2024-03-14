@@ -44,17 +44,31 @@ const getUsersById = async (req, res, next) => {
 
 const signUp = async (req, res, next) => {
   try {
-    const { email, userName, role, phoneNumber, password, password_confirm } =
-      req.body;
+    const {
+      email,
+      userName,
+      role,
+      name,
+      phoneNumber,
+      password,
+      confirmPassword,
+    } = req.body;
     if (
       !email ||
       !userName ||
+      !name ||
       !role ||
       !phoneNumber ||
       !password ||
-      !password_confirm
+      !confirmPassword
     )
-      return next(new AppError("Please enter the required info"));
+      return next(
+        new AppError(
+          "Please enter the required info" + !confirmPassword //remove it
+            ? "confirmPassword"
+            : ""
+        )
+      );
     const user = await User.findOne({ email });
     if (user) {
       return next(new AppError("user email already exists"));
@@ -62,6 +76,7 @@ const signUp = async (req, res, next) => {
       const hashed_password = await bcrypt.hash(password, 10);
       const newUser = new User({
         email,
+        name,
         userName,
         role,
         phoneNumber,
@@ -107,14 +122,14 @@ const login = async (req, res, next) => {
 
 const updatePassword = async (req, res, next) => {
   try {
-    const { email, password, phoneNumber, newPassword, newPassword_confirm } =
+    const { email, password, phoneNumber, newPassword, newConfirmPassword } =
       req.body;
     if (
       !email ||
       !password ||
       !phoneNumber ||
       !newPassword ||
-      !newPassword_confirm
+      !newConfirmPassword
     )
       return next(new AppError("Please enter the required info"));
     const user = await User.findOne({ email: email });
@@ -124,7 +139,7 @@ const updatePassword = async (req, res, next) => {
     try {
       await passwordSchema.validateAsync({
         password: newPassword,
-        password_confirm: newPassword_confirm,
+        confirmPassword: newConfirmPassword,
       });
     } catch (err) {
       return next(err);
