@@ -1,9 +1,9 @@
 const express = require("express");
 const cors = require("cors");
-const { Server } = require("socket.io");
 const { createServer } = require("node:http");
-require("dotenv").config();
+const { Server } = require("socket.io");
 const http = require("http");
+require("dotenv").config();
 require("./db.js");
 
 const articlesRoute = require("./src/Routes/articlesRoute.js");

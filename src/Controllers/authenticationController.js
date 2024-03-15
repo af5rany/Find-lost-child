@@ -62,13 +62,7 @@ const signUp = async (req, res, next) => {
       !password ||
       !confirmPassword
     )
-      return next(
-        new AppError(
-          "Please enter the required info" + !confirmPassword //remove it
-            ? "confirmPassword"
-            : ""
-        )
-      );
+      return next(new AppError("Please enter the required info"));
     const user = await User.findOne({ email });
     if (user) {
       return next(new AppError("user email already exists"));
