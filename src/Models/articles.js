@@ -14,7 +14,6 @@ const articleSchema = new Schema({
   userName: {
     type: String,
     required: true,
-    unique: true,
   },
   publishDate: {
     type: Date,
