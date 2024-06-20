@@ -2,8 +2,12 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const messageSchema = new Schema({
-  name: { type: String, required: true },
-  message: { type: String, required: true },
+  message: { type: String },
+  room: { type: String },
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   dateTime: { type: Date },
 });
 
